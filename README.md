@@ -1,0 +1,67 @@
+# Oculus Dei Life Management Backend
+
+This repository contains the backend components for the **Oculus Dei** life management system. The codebase provides in-memory storage of events and an adaptive planning engine, both exposed through FastAPI services.
+
+## Directory Overview
+
+- `backend/api/` – REST services built with FastAPI
+  - `memory_api.py` – access to the memory store
+  - `adaptive_plan_api.py` – register projects and generate adaptive plans
+- `backend/memory/` – in-memory storage and retrieval utilities
+- `backend/core/` – project registry and life optimizer modules
+- `backend/agent/` – presence controller used by the optimizer
+
+## Requirements
+
+- Python 3.9 or later
+- [FastAPI](https://fastapi.tiangolo.com/)
+- [Uvicorn](https://www.uvicorn.org/) (ASGI server)
+- [Pydantic](https://docs.pydantic.dev/)
+
+Install the dependencies with:
+
+```bash
+pip install fastapi uvicorn pydantic
+```
+
+## Running the APIs
+
+### Memory API
+
+Start the memory service on port `8001`:
+
+```bash
+python backend/api/memory_api.py
+```
+
+Alternatively, you can use `uvicorn` directly:
+
+```bash
+uvicorn backend.api.memory_api:app --reload --port 8001
+```
+
+Example endpoints:
+
+- `GET /memory/last` – retrieve the most recent entries
+- `POST /memory/manual` – create a new memory entry
+
+### Adaptive Plan API
+
+Launch the adaptive plan service on port `8000`:
+
+```bash
+python backend/api/adaptive_plan_api.py
+```
+
+Or run it via `uvicorn`:
+
+```bash
+uvicorn backend.api.adaptive_plan_api:app --reload --port 8000
+```
+
+Example endpoints:
+
+- `POST /project` – register a project and analyze its impact
+- `POST /plan` – generate an adaptive plan based on the registered project
+
+Both services will be available locally at `http://localhost:<port>` once started.
