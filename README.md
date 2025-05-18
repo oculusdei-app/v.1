@@ -44,6 +44,7 @@ Example endpoints:
 
 - `GET /memory/last` – retrieve the most recent entries
 - `GET /memory/id/{entry_id}` – retrieve a specific entry by ID
+- `DELETE /memory/id/{entry_id}` – delete an entry by ID
 - `POST /memory/manual` – create a new memory entry
 
 ### Adaptive Plan API

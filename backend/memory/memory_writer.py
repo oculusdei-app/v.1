@@ -162,6 +162,11 @@ def log_error(content: str, severity: str = "info", metadata: Dict = None) -> st
     return memory_store.store(entry)
 
 
+def delete_entry(entry_id: str) -> bool:
+    """Remove an entry from the memory store by ID."""
+    return memory_store.delete(entry_id)
+
+
 def get_memory_store() -> MemoryStore:
     """
     Get the global memory store instance.
