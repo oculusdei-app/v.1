@@ -7,10 +7,11 @@ Currently implemented as in-memory storage with plans to extend to
 vector databases (ChromaDB or Qdrant) in the future.
 """
 
-from typing import Dict, List, Optional, Union, Any
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 import uuid
 import re
+import threading
 from pydantic import BaseModel, Field
 
 
@@ -56,6 +57,7 @@ class MemoryStore:
         """Initialize an empty memory store."""
         self.entries: List[MemoryEntry] = []
         self.type_index: Dict[str, List[MemoryEntry]] = {}  # Index for faster type-based retrieval
+        self._lock = threading.RLock()
     
     def store(self, entry: MemoryEntry) -> str:
         """
@@ -67,15 +69,16 @@ class MemoryStore:
         Returns:
             ID of the stored entry
         """
-        # Add to main entries list
-        self.entries.append(entry)
-        
-        # Update type index
-        if entry.type not in self.type_index:
-            self.type_index[entry.type] = []
-        self.type_index[entry.type].append(entry)
-        
-        return entry.id
+        with self._lock:
+            # Add to main entries list
+            self.entries.append(entry)
+
+            # Update type index
+            if entry.type not in self.type_index:
+                self.type_index[entry.type] = []
+            self.type_index[entry.type].append(entry)
+
+            return entry.id
     
     def retrieve_by_type(self, entry_type: str) -> List[MemoryEntry]:
         """
@@ -87,7 +90,8 @@ class MemoryStore:
         Returns:
             List of MemoryEntry objects matching the specified type
         """
-        return self.type_index.get(entry_type, [])
+        with self._lock:
+            return list(self.type_index.get(entry_type, []))
     
     def search_by_text(self, keyword: str) -> List[MemoryEntry]:
         """
@@ -104,10 +108,10 @@ class MemoryStore:
         """
         if not keyword:
             return []
-        
-        # Simple case-insensitive search
+
         pattern = re.compile(keyword, re.IGNORECASE)
-        return [entry for entry in self.entries if pattern.search(entry.content)]
+        with self._lock:
+            return [entry for entry in self.entries if pattern.search(entry.content)]
     
     def get_last(self, n: int = 10) -> List[MemoryEntry]:
         """
@@ -120,8 +124,9 @@ class MemoryStore:
             List of the n most recent MemoryEntry objects, sorted by timestamp (newest first)
         """
         # Sort entries by timestamp (newest first) and return the top n
-        sorted_entries = sorted(self.entries, key=lambda x: x.timestamp, reverse=True)
-        return sorted_entries[:n]
+        with self._lock:
+            sorted_entries = sorted(self.entries, key=lambda x: x.timestamp, reverse=True)
+            return sorted_entries[:n]
     
     def get_by_id(self, entry_id: str) -> Optional[MemoryEntry]:
         """
@@ -133,10 +138,11 @@ class MemoryStore:
         Returns:
             MemoryEntry object if found, None otherwise
         """
-        for entry in self.entries:
-            if entry.id == entry_id:
-                return entry
-        return None
+        with self._lock:
+            for entry in self.entries:
+                if entry.id == entry_id:
+                    return entry
+            return None
     
     def count_entries(self, entry_type: Optional[str] = None) -> int:
         """
@@ -148,9 +154,10 @@ class MemoryStore:
         Returns:
             Number of entries matching the criteria
         """
-        if entry_type:
-            return len(self.retrieve_by_type(entry_type))
-        return len(self.entries)
+        with self._lock:
+            if entry_type:
+                return len(self.retrieve_by_type(entry_type))
+            return len(self.entries)
     
     def clear(self, entry_type: Optional[str] = None) -> int:
         """
@@ -162,25 +169,20 @@ class MemoryStore:
         Returns:
             Number of entries removed
         """
-        if not entry_type:
-            # Clear all entries
-            count = len(self.entries)
-            self.entries = []
-            self.type_index = {}
+        with self._lock:
+            if not entry_type:
+                count = len(self.entries)
+                self.entries = []
+                self.type_index = {}
+                return count
+
+            entries_to_remove = self.retrieve_by_type(entry_type)
+            count = len(entries_to_remove)
+            self.entries = [entry for entry in self.entries if entry.type != entry_type]
+            if entry_type in self.type_index:
+                del self.type_index[entry_type]
+
             return count
-        
-        # Clear only entries of a specific type
-        entries_to_remove = self.retrieve_by_type(entry_type)
-        count = len(entries_to_remove)
-        
-        # Remove from main entries list
-        self.entries = [entry for entry in self.entries if entry.type != entry_type]
-        
-        # Remove from type index
-        if entry_type in self.type_index:
-            del self.type_index[entry_type]
-        
-        return count
     
     def search_by_metadata(self, key: str, value: Any) -> List[MemoryEntry]:
         """
@@ -193,10 +195,11 @@ class MemoryStore:
         Returns:
             List of MemoryEntry objects with matching metadata
         """
-        return [
-            entry for entry in self.entries 
-            if key in entry.metadata and entry.metadata[key] == value
-        ]
+        with self._lock:
+            return [
+                entry for entry in self.entries
+                if key in entry.metadata and entry.metadata[key] == value
+            ]
 
 
 # Example usage
