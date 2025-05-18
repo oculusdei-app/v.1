@@ -73,13 +73,23 @@ echo "🌀  git-watch loop started (PID $$)"
       echo "🔄  Repo updated $(date '+%H:%M:%S'), restarting…"
       git pull --ff-only origin main
 
-      # stop old processes
+      # ── stop old processes ───────────────────────────────────────────────
       kill $BACK1_PID $BACK2_PID $FRONT_PID 2>/dev/null || true
+      # in case vite forked and PID changed → kill whoever holds 5173
+      if lsof -i :5173 -t >/dev/null 2>&1; then
+        lsof -ti :5173 | xargs kill -9
+      fi
+
+      # wait until port is free (max 5 s)
+      for i in {1..10}; do
+        lsof -i :5173 -t >/dev/null 2>&1 || break
+        sleep 0.5
+      done
 
       # restart backend + frontend
       uvicorn backend.api.adaptive_plan_api:app --reload --port 8000 & BACK1_PID=$!
       uvicorn backend.api.memory_api:app        --reload --port 8001 & BACK2_PID=$!
-      npm --prefix frontend run dev & FRONT_PID=$!
+      npm --prefix frontend run dev -- --port 5173 & FRONT_PID=$!
     fi
     sleep 10
   done
