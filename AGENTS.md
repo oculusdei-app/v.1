@@ -37,6 +37,8 @@ OculusDei.ai/
 │   ├── unit/               # Unit tests
 │   └── integration/        # Integration tests
 ├── .github/                # GitHub workflows
+├── bootstrap.sh            # Script for initializing development environment
+├── dev.sh                  # Script for starting development servers
 ├── AGENTS.md               # This file (agent onboarding)
 └── README.md               # Project README
 ```
@@ -62,7 +64,27 @@ OculusDei.ai/
 - Node.js 16+ (if applicable for frontend)
 - Docker (optional, for containerization)
 
-### Installation
+### Quick Setup
+
+The quickest way to set up the development environment is to use the bootstrap script:
+
+```bash
+# Make the bootstrap script executable
+chmod +x bootstrap.sh
+
+# Run the bootstrap script
+./bootstrap.sh
+```
+
+This script will:
+1. Create a Python virtual environment in `backend/venv`
+2. Install backend dependencies
+3. Install frontend dependencies
+4. Launch both backend and frontend servers
+
+### Manual Installation
+
+If you prefer to set up manually, follow these steps:
 
 1. Clone the repository:
 ```bash
@@ -72,13 +94,15 @@ cd OculusDei.ai
 
 2. Set up a virtual environment:
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+mkdir -p backend/venv
+python -m venv backend/venv
+source backend/venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
 
 3. Install dependencies:
 ```bash
-pip install -r requirements.txt
+pip install -r backend/requirements.txt
+cd frontend && npm install && cd ..
 ```
 
 4. Set up environment variables:
@@ -95,11 +119,35 @@ cp .env.example .env
 
 ### Running the Application
 
-```bash
-# Start the backend server
-python -m backend.api.main
+The easiest way to run the application is using the dev script:
 
-# Start the frontend development server (if applicable)
+```bash
+# Make the script executable (if not already)
+chmod +x dev.sh
+
+# Run the development servers
+./dev.sh
+```
+
+This will start:
+- The backend Adaptive Plan API server on port 8000
+- The backend Memory API server on port 8001
+- The frontend development server on port 5173
+
+If you need to start services individually:
+
+```bash
+# Start the backend Adaptive Plan API
+cd backend
+source venv/bin/activate
+python -m uvicorn api.adaptive_plan_api:app --reload --host 0.0.0.0 --port 8000
+
+# Start the backend Memory API 
+cd backend
+source venv/bin/activate
+python -m uvicorn api.memory_api:app --reload --host 0.0.0.0 --port 8001
+
+# Start the frontend development server
 cd frontend
 npm run dev
 ```
@@ -295,6 +343,17 @@ When creating PRs, Codex should:
 
 ## Troubleshooting Common Issues
 
+### Development Environment Issues
+
+- **Issue**: `ModuleNotFoundError` when starting the backend
+  **Solution**: Make sure you've activated the virtual environment with `source backend/venv/bin/activate`
+
+- **Issue**: Frontend fails to connect to backend API
+  **Solution**: Ensure the backend servers are running and check for CORS configuration
+
+- **Issue**: Changes to code aren't reflected in the running application
+  **Solution**: The auto-reload might have failed. Restart the dev servers with `./dev.sh`
+
 > **[PROJECT_SPECIFIC_DETAIL]** *Add common issues and their solutions that team members or AI agents might encounter.*
 
 ---
@@ -304,5 +363,6 @@ When creating PRs, Codex should:
 - [Project Documentation](./docs/)
 - [Python Style Guide (PEP 8)](https://www.python.org/dev/peps/pep-0008/)
 - [Conventional Commits](https://www.conventionalcommits.org/)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
 
 > **[PROJECT_SPECIFIC_DETAIL]** *Add links to any additional resources that would be helpful.* 
