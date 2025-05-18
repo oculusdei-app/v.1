@@ -243,6 +243,52 @@ async def search_entries(
 
 
 @app.get(
+    "/memory/search_regex",
+    response_model=MemoryListResponse,
+    tags=["Memory Retrieval"],
+    summary="Regex search of memory entries",
+    description="Search entries using a regular expression pattern",
+)
+async def regex_search_entries(
+    pattern: str = Query(..., min_length=1, description="Regex pattern"),
+    type_filter: Optional[str] = Query(None, description="Optional type filter"),
+):
+    """Return entries matching the regex pattern."""
+    try:
+        entries = memory_store.search_by_regex(pattern)
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+    if type_filter:
+        entries = [e for e in entries if e.type == type_filter]
+
+    return MemoryListResponse(
+        total=len(entries),
+        entries=[memory_entry_to_response(e) for e in entries],
+    )
+
+
+@app.get(
+    "/memory/search_metadata",
+    response_model=MemoryListResponse,
+    tags=["Memory Retrieval"],
+    summary="Search by metadata substring",
+    description="Search entries where a metadata value contains the given substring",
+)
+async def metadata_search_entries(
+    key: str = Query(..., description="Metadata key"),
+    value: str = Query(..., description="Substring to match"),
+    limit: int = Query(50, ge=1, le=500, description="Maximum number of entries"),
+):
+    """Return entries matching the metadata substring."""
+    entries = memory_store.search_by_metadata_value(key, value)[:limit]
+    return MemoryListResponse(
+        total=len(entries),
+        entries=[memory_entry_to_response(e) for e in entries],
+    )
+
+
+@app.get(
     "/memory/semantic",
     response_model=MemoryListResponse,
     tags=["Memory Retrieval"],

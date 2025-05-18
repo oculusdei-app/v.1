@@ -63,15 +63,21 @@ class MemoryStore:
         self._lock = threading.RLock()
 
     def _compute_embedding(self, text: str) -> List[float]:
-        """Generate a simple hashed bag-of-words embedding for the given text."""
+        """Generate a hashed bag-of-words/bigram embedding for the given text."""
         vector = [0.0] * self.embedding_dim
         if not text:
             return vector
 
         tokens = re.findall(r"\w+", text.lower())
-        for token in tokens:
+        for i, token in enumerate(tokens):
             idx = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16) % self.embedding_dim
             vector[idx] += 1.0
+
+            if i + 1 < len(tokens):
+                bigram = f"{token}_{tokens[i + 1]}"
+                b_idx = int(hashlib.md5(bigram.encode("utf-8")).hexdigest(), 16) % self.embedding_dim
+                vector[b_idx] += 0.5
+
         return vector
 
     @staticmethod
@@ -151,11 +157,18 @@ class MemoryStore:
         """Return entries most similar to the provided text."""
         if not text:
             return []
+        if top_n <= 0:
+            raise ValueError("top_n must be positive")
 
         query_vec = self._compute_embedding(text)
         with self._lock:
             scored = [
-                (self._cosine_similarity(query_vec, self.embeddings.get(entry.id, [])), entry)
+                (
+                    self._cosine_similarity(
+                        query_vec, self.embeddings.get(entry.id, [])
+                    ),
+                    entry,
+                )
                 for entry in self.entries
             ]
 
@@ -270,6 +283,49 @@ class MemoryStore:
                 entry for entry in self.entries
                 if key in entry.metadata and entry.metadata[key] == value
             ]
+
+    def search_by_metadata_value(self, key: str, value_substr: str) -> List[MemoryEntry]:
+        """Search for entries where a metadata value contains the given substring."""
+        if not key or value_substr is None:
+            return []
+        with self._lock:
+            return [
+                entry
+                for entry in self.entries
+                if isinstance(entry.metadata.get(key), str)
+                and value_substr.lower() in entry.metadata.get(key, "").lower()
+            ]
+
+    def search_by_regex(self, pattern: str) -> List[MemoryEntry]:
+        """Search entry content using a regular expression pattern."""
+        if not pattern:
+            return []
+        try:
+            regex = re.compile(pattern, re.IGNORECASE)
+        except re.error as exc:
+            raise ValueError(f"Invalid regex: {exc}") from exc
+
+        with self._lock:
+            return [entry for entry in self.entries if regex.search(entry.content)]
+
+    def update_entry(self, entry_id: str, content: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None) -> bool:
+        """Update an existing entry and refresh its embedding."""
+        with self._lock:
+            entry = self.get_by_id(entry_id)
+            if not entry:
+                return False
+            if content is not None:
+                if not content:
+                    raise ValueError("Updated content cannot be empty")
+                entry.content = content
+            if metadata is not None:
+                entry.metadata.update(metadata)
+
+            embedding_source = entry.content
+            if entry.metadata:
+                embedding_source += " " + " ".join(str(v) for v in entry.metadata.values())
+            self.embeddings[entry.id] = self._compute_embedding(embedding_source)
+            return True
 
 
 # Example usage
