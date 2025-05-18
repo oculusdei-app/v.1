@@ -91,3 +91,15 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:5173` and assumes the backend memory API is running on `http://localhost:8001`.
+
+## Combined Local Development
+
+To run both the FastAPI backend on port `8000` and the React frontend on port `5173`
+with automatic updates from `origin/main`, use the `dev.sh` script:
+
+```bash
+./dev.sh
+```
+
+The script pulls the latest changes every 10 seconds and leverages `uvicorn` and
+`vite` for hot reloading. Press `Ctrl+C` to stop all processes.
