@@ -208,24 +208,36 @@ const EnhancedChatInterface: React.FC = () => {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+      <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-b from-white to-gray-50 dark:from-dark-800 dark:to-dark-900/90">
         <div className="flex items-end space-x-2">
-          <textarea
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            rows={1}
-            placeholder={`Type your message in ${mode} mode...`}
-            className="form-input flex-1 min-h-[44px] max-h-32 resize-none py-3"
-            style={{ 
-              height: 'auto',
-              minHeight: '44px',
-              overflowY: input.split('\n').length > 1 ? 'auto' : 'hidden'
-            }}
-          />
+          <div className="flex-1 relative">
+            <textarea
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              placeholder={`Type your message in ${mode} mode...`}
+              className="form-input flex-1 min-h-[44px] max-h-32 resize-none py-3 pr-12 shadow-sm hover:shadow transition-all duration-200 focus:shadow-md"
+              style={{ 
+                height: 'auto',
+                minHeight: '44px',
+                overflowY: input.split('\n').length > 1 ? 'auto' : 'hidden',
+                width: '100%'
+              }}
+            />
+            <span className={`absolute right-3 bottom-3 text-xs px-1.5 py-0.5 rounded-full transition-all ${
+              mode === 'command' 
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                : mode === 'reflect' 
+                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' 
+                  : 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+            }`}>
+              {mode}
+            </span>
+          </div>
           <button 
             onClick={sendMessage} 
-            className="btn-primary px-6 h-[44px] flex items-center justify-center"
+            className="btn-primary px-6 h-[44px] flex items-center justify-center hover:scale-105 transform transition-all duration-200 active:scale-95"
             disabled={loading || !input.trim()}
           >
             {loading ? (
@@ -240,35 +252,58 @@ const EnhancedChatInterface: React.FC = () => {
             )}
           </button>
         </div>
+        <div className="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 px-1">
+          <span>Press Enter to send, Shift+Enter for new line</span>
+          <div className="flex items-center space-x-2">
+            <span className={`w-2 h-2 rounded-full ${mode === 'command' ? 'bg-blue-500' : mode === 'reflect' ? 'bg-purple-500' : 'bg-green-500'} animate-pulse-slow`}></span>
+            <span>Mode: {mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
+          </div>
+        </div>
       </div>
 
       {/* Settings modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="card w-full max-w-lg slide-in">
-            <div className="card-header flex justify-between items-center">
-              <h3 className="font-semibold text-lg">Assistant Settings</h3>
-              <button onClick={() => setShowSettings(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+          <div className="card w-full max-w-lg scale-in elevation-3">
+            <div className="card-header flex justify-between items-center bg-gradient-to-r from-white to-gray-50 dark:from-dark-800 dark:to-dark-700">
+              <h3 className="font-semibold text-lg text-brand-800 dark:text-brand-200 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Assistant Settings
+              </h3>
+              <button onClick={() => setShowSettings(false)} className="btn-icon-ghost text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            <div className="card-body space-y-4">
-              <div>
-                <label className="form-label">Model</label>
+            <div className="card-body space-y-5 p-5">
+              <div className="animate-fade-in" style={{ animationDelay: '50ms' }}>
+                <label className="form-label flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  Model
+                </label>
                 <select
                   value={settings.model}
                   onChange={e => setSettings({ ...settings, model: e.target.value as DialogSettings['model'] })}
-                  className="form-input"
+                  className="form-input shadow-sm hover:shadow transition-shadow duration-200"
                 >
                   <option value="gpt-4o">GPT-4o</option>
                   <option value="claude-3">Claude 3</option>
                 </select>
               </div>
 
-              <div>
-                <label className="form-label">Temperature ({settings.temperature})</label>
+              <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+                <label className="form-label flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-accent-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                  </svg>
+                  Temperature ({settings.temperature})
+                </label>
                 <input
                   type="range"
                   min="0"
@@ -276,52 +311,77 @@ const EnhancedChatInterface: React.FC = () => {
                   step="0.1"
                   value={settings.temperature}
                   onChange={e => setSettings({ ...settings, temperature: parseFloat(e.target.value) })}
-                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                  className="w-full h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 rounded-lg appearance-none cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  <span>Precise</span>
-                  <span>Balanced</span>
-                  <span>Creative</span>
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                  <span className="text-blue-600 dark:text-blue-400">Precise</span>
+                  <span className="text-purple-600 dark:text-purple-400">Balanced</span>
+                  <span className="text-red-600 dark:text-red-400">Creative</span>
                 </div>
               </div>
 
-              <div>
-                <label className="form-label">Max Tokens</label>
+              <div className="animate-fade-in" style={{ animationDelay: '150ms' }}>
+                <label className="form-label flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                  </svg>
+                  Max Tokens
+                </label>
                 <input
                   type="number"
                   min="50"
                   max="4000"
                   value={settings.maxTokens}
                   onChange={e => setSettings({ ...settings, maxTokens: parseInt(e.target.value, 10) })}
-                  className="form-input"
+                  className="form-input shadow-sm hover:shadow transition-shadow duration-200"
                 />
               </div>
 
-              <div>
-                <label className="form-label">OpenAI API Key</label>
+              <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+                <label className="form-label flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  OpenAI API Key
+                </label>
                 <input
                   type="password"
                   value={settings.openAiKey}
                   onChange={e => setSettings({ ...settings, openAiKey: e.target.value })}
-                  className="form-input"
+                  className="form-input shadow-sm hover:shadow transition-shadow duration-200"
                   placeholder="sk-..."
                 />
               </div>
 
-              <div>
-                <label className="form-label">Anthropic API Key</label>
+              <div className="animate-fade-in" style={{ animationDelay: '250ms' }}>
+                <label className="form-label flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                  </svg>
+                  Anthropic API Key
+                </label>
                 <input
                   type="password"
                   value={settings.anthropicKey}
                   onChange={e => setSettings({ ...settings, anthropicKey: e.target.value })}
-                  className="form-input"
+                  className="form-input shadow-sm hover:shadow transition-shadow duration-200"
                   placeholder="sk-ant-..."
                 />
               </div>
             </div>
-            <div className="p-4 flex justify-end space-x-2 border-t dark:border-gray-700">
-              <button onClick={saveSettings} className="btn-primary">Save Settings</button>
-              <button onClick={() => setShowSettings(false)} className="btn-secondary">Cancel</button>
+            <div className="p-4 flex justify-end space-x-3 border-t dark:border-gray-700 bg-gray-50 dark:bg-dark-800/50">
+              <button onClick={saveSettings} className="btn-primary hover:scale-105 transform transition-transform active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                Save Settings
+              </button>
+              <button onClick={() => setShowSettings(false)} className="btn-secondary hover:scale-105 transform transition-transform active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
@@ -329,11 +389,13 @@ const EnhancedChatInterface: React.FC = () => {
 
       {/* Toast notification */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg z-50 fade-in flex items-center space-x-2">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          <span>{toast}</span>
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-dark-800/90 text-white px-5 py-3 rounded-xl shadow-lg z-50 slide-in-bottom flex items-center space-x-3 border border-dark-700/50 backdrop-blur-sm">
+          <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <span className="font-medium">{toast}</span>
         </div>
       )}
     </div>
