@@ -14,7 +14,11 @@ from datetime import datetime
 # Import memory components
 from backend.memory.memory_store import MemoryEntry
 from backend.memory.memory_writer import get_memory_store, log_event, log_decision, log_insight, log_project
-from backend.memory.memory_retriever import find_entries_by_keyword
+from backend.memory.memory_retriever import (
+    find_entries_by_keyword,
+    summarize_recent_events,
+    count_entries_by_type,
+)
 
 # Create FastAPI app for memory routes
 app = FastAPI(
@@ -59,6 +63,11 @@ class MemoryListResponse(BaseModel):
     entries: List[MemoryEntryResponse]
 
 
+class EventSummaryResponse(BaseModel):
+    """Response model for recent event summary"""
+    summary: str
+
+
 # Helper function to convert MemoryEntry to MemoryEntryResponse
 def memory_entry_to_response(entry: MemoryEntry) -> MemoryEntryResponse:
     """Convert a MemoryEntry to a MemoryEntryResponse"""
@@ -84,7 +93,9 @@ async def root():
             "/memory/type/{entry_type}",
             "/memory/search",
             "/memory/insights",
-            "/memory/manual"
+            "/memory/manual",
+            "/memory/stats",
+            "/memory/events/summary"
         ]
     }
 
@@ -215,6 +226,45 @@ async def get_insights(
         total=len(sorted_insights),
         entries=[memory_entry_to_response(entry) for entry in sorted_insights]
     )
+
+
+@app.get(
+    "/memory/stats",
+    response_model=Dict[str, int],
+    tags=["Memory Retrieval"],
+    summary="Get entry counts by type",
+    description="Retrieve a summary of memory entry counts grouped by type",
+)
+async def get_memory_stats():
+    """Return counts of memory entries by type."""
+    try:
+        return count_entries_by_type()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to retrieve memory statistics: {str(e)}",
+        )
+
+
+@app.get(
+    "/memory/events/summary",
+    response_model=EventSummaryResponse,
+    tags=["Memory Retrieval"],
+    summary="Summarize recent events",
+    description="Generate a short bullet-point summary of recent events",
+)
+async def get_event_summary(
+    n: int = Query(3, ge=1, le=20, description="Number of events to include"),
+):
+    """Return a summary of the most recent events."""
+    try:
+        summary = summarize_recent_events(n)
+        return EventSummaryResponse(summary=summary)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Failed to generate event summary: {str(e)}",
+        )
 
 
 @app.post(
