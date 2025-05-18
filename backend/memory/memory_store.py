@@ -11,6 +11,7 @@ from typing import Dict, List, Optional, Any
 from datetime import datetime
 import uuid
 import re
+import hashlib
 import threading
 from pydantic import BaseModel, Field
 
@@ -57,7 +58,31 @@ class MemoryStore:
         """Initialize an empty memory store."""
         self.entries: List[MemoryEntry] = []
         self.type_index: Dict[str, List[MemoryEntry]] = {}  # Index for faster type-based retrieval
+        self.embeddings: Dict[str, List[float]] = {}
+        self.embedding_dim: int = 128
         self._lock = threading.RLock()
+
+    def _compute_embedding(self, text: str) -> List[float]:
+        """Generate a simple hashed bag-of-words embedding for the given text."""
+        vector = [0.0] * self.embedding_dim
+        if not text:
+            return vector
+
+        tokens = re.findall(r"\w+", text.lower())
+        for token in tokens:
+            idx = int(hashlib.md5(token.encode("utf-8")).hexdigest(), 16) % self.embedding_dim
+            vector[idx] += 1.0
+        return vector
+
+    @staticmethod
+    def _cosine_similarity(vec1: List[float], vec2: List[float]) -> float:
+        """Compute cosine similarity between two vectors."""
+        dot = sum(a * b for a, b in zip(vec1, vec2))
+        norm1 = sum(a * a for a in vec1) ** 0.5
+        norm2 = sum(b * b for b in vec2) ** 0.5
+        if norm1 == 0.0 or norm2 == 0.0:
+            return 0.0
+        return dot / (norm1 * norm2)
     
     def store(self, entry: MemoryEntry) -> str:
         """
@@ -69,9 +94,18 @@ class MemoryStore:
         Returns:
             ID of the stored entry
         """
+        if not entry.content:
+            raise ValueError("Memory entry content cannot be empty")
+
         with self._lock:
             # Add to main entries list
             self.entries.append(entry)
+
+            # Generate and store embedding for semantic search
+            embedding_source = entry.content
+            if entry.metadata:
+                embedding_source += " " + " ".join(str(v) for v in entry.metadata.values())
+            self.embeddings[entry.id] = self._compute_embedding(embedding_source)
 
             # Update type index
             if entry.type not in self.type_index:
@@ -112,6 +146,21 @@ class MemoryStore:
         pattern = re.compile(keyword, re.IGNORECASE)
         with self._lock:
             return [entry for entry in self.entries if pattern.search(entry.content)]
+
+    def search_by_similarity(self, text: str, top_n: int = 5) -> List[MemoryEntry]:
+        """Return entries most similar to the provided text."""
+        if not text:
+            return []
+
+        query_vec = self._compute_embedding(text)
+        with self._lock:
+            scored = [
+                (self._cosine_similarity(query_vec, self.embeddings.get(entry.id, [])), entry)
+                for entry in self.entries
+            ]
+
+        scored.sort(key=lambda x: x[0], reverse=True)
+        return [entry for score, entry in scored[:top_n] if score > 0]
     
     def get_last(self, n: int = 10) -> List[MemoryEntry]:
         """
@@ -150,6 +199,8 @@ class MemoryStore:
             for i, entry in enumerate(self.entries):
                 if entry.id == entry_id:
                     del self.entries[i]
+                    if entry_id in self.embeddings:
+                        del self.embeddings[entry_id]
                     if entry.type in self.type_index:
                         try:
                             self.type_index[entry.type].remove(entry)
@@ -190,6 +241,7 @@ class MemoryStore:
                 count = len(self.entries)
                 self.entries = []
                 self.type_index = {}
+                self.embeddings = {}
                 return count
 
             entries_to_remove = self.retrieve_by_type(entry_type)
@@ -197,6 +249,8 @@ class MemoryStore:
             self.entries = [entry for entry in self.entries if entry.type != entry_type]
             if entry_type in self.type_index:
                 del self.type_index[entry_type]
+            for entry in entries_to_remove:
+                self.embeddings.pop(entry.id, None)
 
             return count
     

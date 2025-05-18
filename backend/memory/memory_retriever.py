@@ -57,6 +57,18 @@ def find_entries_by_keyword(keyword: str, type_filter: Optional[str] = None) -> 
     return matching_entries
 
 
+def semantic_search(query: str, top_n: int = 5, type_filter: Optional[str] = None) -> List[MemoryEntry]:
+    """Search memory entries semantically using hashed embeddings."""
+    if not query:
+        return []
+
+    memory_store = get_memory_store()
+    results = memory_store.search_by_similarity(query, top_n)
+    if type_filter:
+        results = [entry for entry in results if entry.type == type_filter]
+    return results
+
+
 def get_related_entries(metadata_key: str, metadata_value: Any) -> List[MemoryEntry]:
     """
     Retrieve memory entries that have a specific metadata key-value pair.

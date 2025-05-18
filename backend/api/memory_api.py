@@ -24,6 +24,7 @@ from backend.memory.memory_writer import (
 )
 from backend.memory.memory_retriever import (
     find_entries_by_keyword,
+    semantic_search,
     summarize_recent_events,
     count_entries_by_type,
 )
@@ -234,10 +235,30 @@ async def search_entries(
         MemoryListResponse with the matching entries
     """
     entries = find_entries_by_keyword(q, type_filter)
-    
+
     return MemoryListResponse(
         total=len(entries),
         entries=[memory_entry_to_response(entry) for entry in entries]
+    )
+
+
+@app.get(
+    "/memory/semantic",
+    response_model=MemoryListResponse,
+    tags=["Memory Retrieval"],
+    summary="Semantic search of memory entries",
+    description="Retrieve entries most similar to the provided text using hashed embeddings",
+)
+async def semantic_search_entries(
+    q: str = Query(..., min_length=2, description="Query text for semantic search"),
+    n: int = Query(5, ge=1, le=50, description="Number of entries to return"),
+    type_filter: Optional[str] = Query(None, description="Optional type filter"),
+):
+    """Return entries semantically similar to the query text."""
+    entries = semantic_search(q, top_n=n, type_filter=type_filter)
+    return MemoryListResponse(
+        total=len(entries),
+        entries=[memory_entry_to_response(entry) for entry in entries],
     )
 
 

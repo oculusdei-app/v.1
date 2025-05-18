@@ -1,6 +1,9 @@
 import unittest
 from backend.memory.memory_writer import get_memory_store, log_event
 from backend.memory.memory_writer import delete_entry
+from backend.memory.memory_store import MemoryEntry
+from backend.memory.memory_store import MemoryStore
+
 
 class MemoryStoreTest(unittest.TestCase):
     def setUp(self):
@@ -28,6 +31,19 @@ class MemoryStoreTest(unittest.TestCase):
         deleted = delete_entry(entry_id)
         self.assertTrue(deleted)
         self.assertIsNone(self.store.get_by_id(entry_id))
+
+    def test_semantic_search(self):
+        self.store.clear()
+        id_ml = log_event("Started machine learning project")
+        log_event("Went grocery shopping")
+
+        results = self.store.search_by_similarity("ML project", top_n=1)
+        self.assertEqual(results[0].id, id_ml)
+
+    def test_store_rejects_empty_content(self):
+        entry = MemoryEntry(type="event", content="", metadata={})
+        with self.assertRaises(ValueError):
+            self.store.store(entry)
 
 if __name__ == '__main__':
     unittest.main()
