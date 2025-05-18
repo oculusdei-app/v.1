@@ -7,6 +7,7 @@ This repository contains the backend components for the **Oculus Dei** life mana
 - `backend/api/` – REST services built with FastAPI
   - `memory_api.py` – access to the memory store
   - `adaptive_plan_api.py` – register projects and generate adaptive plans
+  - `reflector_api.py` – trigger reflection cycles
 - `backend/memory/` – in-memory storage and retrieval utilities
 - `backend/core/` – project registry and life optimizer modules
 - `backend/agent/` – presence controller used by the optimizer
@@ -70,6 +71,18 @@ Example endpoints:
 - `POST /plan` – generate an adaptive plan based on the registered project
 
 Both services will be available locally at `http://localhost:<port>` once started.
+
+### Reflector API
+
+Run the reflection service on port `8002`:
+
+```bash
+python backend/api/reflector_api.py
+```
+
+Key endpoint:
+
+- `POST /reflect` – trigger a reflection cycle and return the prompt
 
 ## Frontend (React + Vite)
 

@@ -43,7 +43,7 @@ The system aims to provide a unified framework for managing life's complexity by
                                     ▼
 ┌───────────────────────────────────────────────────────────────┐
 │                           API LAYER                            │
-│     adaptive_plan_api.py           memory_api.py               │
+│     adaptive_plan_api.py  memory_api.py  reflector_api.py      │
 └───────────────────────────────────┬───────────────────────────┘
                                     │
           ┌─────────────────────────┼─────────────────────────┐
@@ -69,7 +69,8 @@ backend/
 │   └── presence_controller.py  # Coordinates life restructuring responses
 ├── api/
 │   ├── adaptive_plan_api.py    # REST API for projects and adaptive plans
-│   └── memory_api.py           # REST API for memory access
+│   ├── memory_api.py           # REST API for memory access
+│   └── reflector_api.py        # Trigger reflection cycles
 ├── core/
 │   ├── project_registry.py     # Registers projects and analyzes impact
 │   └── life_optimizer.py       # Transforms impacts into actionable plans
@@ -135,7 +136,7 @@ Coordinates responses to external events and internal triggers, serving as the e
 
 Exposes system functionality to external interfaces, acting as the communication bridge to users and other systems.
 
-- **Components**: `adaptive_plan_api.py`, `memory_api.py`
+- **Components**: `adaptive_plan_api.py`, `memory_api.py`, `reflector_api.py`
 - **Responsibilities**:
   - Providing REST endpoints for UI and external systems with clear contracts
   - Handling data serialization and validation with strong typing
