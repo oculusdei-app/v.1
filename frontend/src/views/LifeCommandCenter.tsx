@@ -206,16 +206,16 @@ const LifeCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-xs font-medium">View Projects</span>
               </button>
-              <button className="btn-ghost flex flex-col items-center justify-center p-4 bg-green-50/80 dark:bg-green-900/20 text-green-600 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-green-100/50 dark:border-green-800/30">
-                <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-800/30 flex items-center justify-center mb-2">
+              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-green-50/80 dark:bg-green-900/20 text-green-600 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-green-100/50 dark:border-green-800/30">
+                <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-green-100 dark:bg-green-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   </svg>
                 </div>
                 <span className="text-xs font-medium">Refresh Data</span>
               </button>
-              <button className="btn-ghost flex flex-col items-center justify-center p-4 bg-amber-50/80 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-amber-100/50 dark:border-amber-800/30">
-                <div className="w-10 h-10 rounded-full bg-amber-100 dark:bg-amber-800/30 flex items-center justify-center mb-2">
+              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-amber-50/80 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-amber-100/50 dark:border-amber-800/30">
+                <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-amber-100 dark:bg-amber-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                   </svg>
@@ -228,7 +228,7 @@ const LifeCommandCenter: React.FC = () => {
         
         {/* Right column - Chat Interface */}
         <div className="md:col-span-1 lg:col-span-2 card overflow-hidden elevation-3 shadow-lg slide-in-right rounded-xl border border-indigo-100/50 dark:border-indigo-900/30">
-          <div className="card-header flex justify-between items-center bg-gradient-to-r from-indigo-50/80 to-indigo-100/60 dark:from-indigo-900/20 dark:to-indigo-800/10 border-b border-indigo-100/50 dark:border-indigo-800/30 py-4 px-5">
+          <div className="card-header flex justify-between items-center bg-gradient-to-r from-indigo-50/80 to-indigo-100/60 dark:from-indigo-900/20 dark:to-indigo-800/10 border-b border-indigo-100/50 dark:border-indigo-800/30 py-3 xs:py-4 px-3 xs:px-4 sm:px-5">
             <h2 className="font-semibold flex items-center text-indigo-800 dark:text-indigo-200">
               <div className="flex items-center justify-center w-7 h-7 bg-indigo-100 dark:bg-indigo-800/30 rounded-full mr-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-indigo-600 dark:text-indigo-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -259,7 +259,7 @@ const LifeCommandCenter: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="h-[calc(100vh-13rem)]">
+          <div className="h-[calc(100vh-12rem)] xs:h-[calc(100vh-13rem)]">
             <EnhancedChatInterface />
           </div>
         </div>

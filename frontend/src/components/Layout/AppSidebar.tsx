@@ -93,11 +93,11 @@ const AppSidebar: React.FC = () => {
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-4 space-y-4">
+      <div className="p-3 xs:p-4 space-y-3 xs:space-y-4">
         {/* Active Project */}
         <div className="card">
-          <div className="card-header flex justify-between items-center">
-            <h3 className="font-semibold">Active Project</h3>
+          <div className="card-header flex justify-between items-center p-2 xs:p-4">
+            <h3 className="font-semibold text-sm xs:text-base">Active Project</h3>
             <span className="text-xs text-gray-500 dark:text-gray-400">{projects.length} total</span>
           </div>
           <div className="card-body text-sm space-y-2">
@@ -105,13 +105,13 @@ const AppSidebar: React.FC = () => {
               <div className="animate-pulse h-12 bg-gray-200 dark:bg-gray-700 rounded"></div>
             ) : projects.length ? (
               <>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between flex-wrap gap-y-1">
                   <div className="font-medium">{projects[0].name}</div>
                   <div className={`px-2 py-0.5 text-xs text-white rounded-full ${getPriorityColor(projects[0].priority_level as string)}`}>
                     {projects[0].priority_level || 'medium'}
                   </div>
                 </div>
-                <div className="text-gray-500 dark:text-gray-400 line-clamp-2">
+                <div className="text-gray-500 dark:text-gray-400 line-clamp-2 text-xs xs:text-sm">
                   {projects[0].description}
                 </div>
                 {projects[0].category && (
@@ -130,8 +130,8 @@ const AppSidebar: React.FC = () => {
 
         {/* Today's Goals */}
         <div className="card">
-          <div className="card-header flex justify-between items-center">
-            <h3 className="font-semibold">Today's Goals</h3>
+          <div className="card-header flex justify-between items-center p-2 xs:p-4">
+            <h3 className="font-semibold text-sm xs:text-base">Today's Goals</h3>
             <button className="text-xs text-blue-600 dark:text-blue-400 hover:underline">
               Add Goal
             </button>
