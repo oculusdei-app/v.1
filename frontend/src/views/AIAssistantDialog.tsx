@@ -24,7 +24,8 @@ interface DialogSettings {
   anthropicKey: string;
 }
 
-const MEMORY_API = 'http://localhost:8001';
+const MEMORY_API =
+  import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001';
 
 const defaultSettings: DialogSettings = {
   model: 'gpt-4o',

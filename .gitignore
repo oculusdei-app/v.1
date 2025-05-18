@@ -10,3 +10,6 @@ frontend/node_modules/.vite/
 # Python
 __pycache__/
 *.py[cod]
+# Environment files
+.env
+frontend/.env
