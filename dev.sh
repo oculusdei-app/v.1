@@ -39,7 +39,7 @@ start_backend() {
   echo "🔄 Starting backend server on port 8000..."
   cd backend
   source venv/bin/activate
-  python -m uvicorn api.adaptive_plan_api:app --host 0.0.0.0 --port 8000 --reload &
+  python -m uvicorn api.adaptive_plan_api:app --host 0.0.0.0 --port 8000 --reload & BACK1_PID=$!
   cd ..
 }
 
@@ -48,7 +48,7 @@ start_frontend() {
   echo "🔄 Starting frontend server on port 5173..."
   cd frontend
   # запускаем настоящий Vite
-  npm run dev &
+  npm run dev & FRONT_PID=$!
   cd ..
 }
 
@@ -57,8 +57,39 @@ start_memory_api() {
   echo "🔄 Starting memory API server on port 8001..."
   cd backend
   source venv/bin/activate
-  python -m uvicorn api.memory_api:app --host 0.0.0.0 --port 8001 --reload &
+  python -m uvicorn api.memory_api:app --host 0.0.0.0 --port 8001 --reload & BACK2_PID=$!
   cd ..
+}
+
+# ── git-watch loop ──────────────────────────────────────────────────────────
+start_git_watch() {
+  echo "🌀  git-watch loop started (PID $$)"
+  (
+    while true; do
+      LOCAL=$(git rev-parse HEAD)
+      git fetch origin main
+      REMOTE=$(git rev-parse origin/main)
+
+      if [ "$LOCAL" != "$REMOTE" ]; then
+        echo "🔄  Repo updated $(date '+%H:%M:%S'), restarting…"
+        git pull --ff-only origin main
+
+        kill $BACK1_PID $BACK2_PID $FRONT_PID 2>/dev/null || true
+
+        # перезапуск
+        cd backend
+        source venv/bin/activate
+        python -m uvicorn api.adaptive_plan_api:app --host 0.0.0.0 --port 8000 --reload & BACK1_PID=$!
+        python -m uvicorn api.memory_api:app --host 0.0.0.0 --port 8001 --reload & BACK2_PID=$!
+        cd ..
+        cd frontend
+        npm run dev & FRONT_PID=$!
+        cd ..
+      fi
+      sleep 10
+    done
+  ) &
+  PULL_PID=$!
 }
 
 # Main function
@@ -71,6 +102,7 @@ main() {
   start_backend
   start_memory_api
   start_frontend
+  start_git_watch
   
   echo "✅ All services started!"
   echo "   Backend: http://localhost:8000"
