@@ -102,7 +102,8 @@ The foundation of the system that stores, retrieves, and analyzes experiences, a
 - **Responsibilities**:
   - Storing structured memory entries (events, decisions, insights) with rich metadata
   - Providing efficient retrieval by type, keyword, temporality, and metadata
-  - Offering lightweight semantic search via hashed vector embeddings for better context matching
+  - Offering lightweight semantic search via hashed bag-of-words and bigram embeddings for better context matching
+  - Supporting regex and partial metadata search for nuanced retrieval
   - Supporting analytical queries for reflection and pattern recognition
   - Maintaining the system's episodic history and experiential context
 

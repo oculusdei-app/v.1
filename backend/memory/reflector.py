@@ -16,7 +16,8 @@ from backend.memory.memory_retriever import (
     get_entries_in_timeframe,
     find_patterns_in_events,
     get_last_decisions,
-    count_entries_by_type
+    count_entries_by_type,
+    get_recent_errors,
 )
 
 
@@ -62,6 +63,7 @@ class MemoryReflector:
             self._reflect_on_project_patterns() or
             self._reflect_on_decision_sequences() or
             self._reflect_on_event_patterns() or
+            self._reflect_on_recent_errors() or
             self._reflect_on_time_allocation() or
             self._generate_random_reflection()  # Fallback
         )
@@ -258,6 +260,24 @@ class MemoryReflector:
                 )
         
         return None
+
+    def _reflect_on_recent_errors(self) -> Optional[str]:
+        """Reflect on recent error events."""
+        errors = get_recent_errors(7)
+        if len(errors) < 3:
+            return None
+
+        severity_order = {"critical": 4, "error": 3, "warning": 2, "info": 1}
+        most_severe = max(
+            errors,
+            key=lambda e: severity_order.get(e.metadata.get("severity", "info"), 1),
+        )
+        sev = most_severe.metadata.get("severity", "info")
+        return (
+            f"I noticed {len(errors)} error events logged in the last week. "
+            f"The most severe was '{sev}': '{most_severe.content}'. "
+            "What actions could help avoid similar issues?"
+        )
     
     def _reflect_on_time_allocation(self) -> Optional[str]:
         """

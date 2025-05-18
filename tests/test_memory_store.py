@@ -40,6 +40,20 @@ class MemoryStoreTest(unittest.TestCase):
         results = self.store.search_by_similarity("ML project", top_n=1)
         self.assertEqual(results[0].id, id_ml)
 
+    def test_update_and_regex_search(self):
+        entry_id = log_event("initial content")
+        updated = self.store.update_entry(entry_id, content="new content about health")
+        self.assertTrue(updated)
+        results = self.store.search_by_regex("health")
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0].id, entry_id)
+
+    def test_metadata_substring_search(self):
+        log_event("gym session", {"category": "health-gym"})
+        log_event("team meeting", {"category": "work"})
+        results = self.store.search_by_metadata_value("category", "health")
+        self.assertEqual(len(results), 1)
+
     def test_store_rejects_empty_content(self):
         entry = MemoryEntry(type="event", content="", metadata={})
         with self.assertRaises(ValueError):

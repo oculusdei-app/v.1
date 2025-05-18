@@ -166,6 +166,15 @@ def summarize_recent_events(n: int = 3) -> str:
     return summary
 
 
+def get_recent_errors(days: int = 7) -> List[MemoryEntry]:
+    """Return error entries within the last given number of days."""
+    if days <= 0:
+        return []
+
+    start_time = datetime.now() - timedelta(days=days)
+    return get_entries_in_timeframe(start_time, type_filter="error")
+
+
 def get_entries_in_timeframe(start_time: datetime, end_time: Optional[datetime] = None, 
                             type_filter: Optional[str] = None) -> List[MemoryEntry]:
     """
