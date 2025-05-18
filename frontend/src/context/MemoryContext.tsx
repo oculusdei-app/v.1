@@ -18,6 +18,7 @@ interface MemoryContextType {
   entries: MemoryEntry[];
   isLoading: boolean;
   error: string | null;
+  clearError: () => void;
   refresh: () => Promise<void>;
   addEntry: (params: AddParams) => Promise<void>;
   searchEntries: (query: string) => Promise<MemoryEntry[]>;
@@ -32,6 +33,8 @@ export const MemoryProvider: React.FC<{children: React.ReactNode}> = ({ children
   const [entries, setEntries] = useState<MemoryEntry[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const clearError = () => setError(null);
 
   const refresh = useCallback(async () => {
     setIsLoading(true);
@@ -126,6 +129,7 @@ export const MemoryProvider: React.FC<{children: React.ReactNode}> = ({ children
         entries,
         isLoading,
         error,
+        clearError,
         refresh,
         addEntry,
         searchEntries,

@@ -26,6 +26,12 @@ const AppSidebar: React.FC = () => {
     goals: true,
     stats: true
   });
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showTempToast = (text: string) => {
+    setToast(text);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   // Fetch data on mount
   useEffect(() => {
@@ -38,6 +44,7 @@ const AppSidebar: React.FC = () => {
         }
       } catch (e) {
         console.error('Failed to load projects', e);
+        showTempToast('Failed to load projects');
       } finally {
         setLoading(prev => ({ ...prev, projects: false }));
       }
@@ -52,6 +59,7 @@ const AppSidebar: React.FC = () => {
         }
       } catch (e) {
         console.error('Failed to load goals', e);
+        showTempToast('Failed to load goals');
       } finally {
         setLoading(prev => ({ ...prev, goals: false }));
       }
@@ -66,6 +74,7 @@ const AppSidebar: React.FC = () => {
         }
       } catch (e) {
         console.error('Failed to load memory stats', e);
+        showTempToast('Failed to load memory stats');
       } finally {
         setLoading(prev => ({ ...prev, stats: false }));
       }
@@ -187,8 +196,8 @@ const AppSidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Time Focus Map (Placeholder) */}
-        <div className="card">
+      {/* Time Focus Map (Placeholder) */}
+      <div className="card">
           <div className="card-header">
             <h3 className="font-semibold">Time Focus Map</h3>
           </div>
@@ -202,6 +211,11 @@ const AppSidebar: React.FC = () => {
           </div>
         </div>
       </div>
+      {toast && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow">
+          {toast}
+        </div>
+      )}
     </div>
   );
 };

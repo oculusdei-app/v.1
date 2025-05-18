@@ -33,26 +33,46 @@ export interface InsightEntry {
 
 /** Retrieve the most recent goals */
 export async function fetchGoals(limit = 5): Promise<GoalEntry[]> {
-  const res = await memoryApi.get(`/memory/type/goal?limit=${limit}`);
-  return res.data?.entries || [];
+  try {
+    const res = await memoryApi.get(`/memory/type/goal?limit=${limit}`);
+    return res.data?.entries || [];
+  } catch (err) {
+    console.error('fetchGoals error', err);
+    throw new Error('Failed to fetch goals');
+  }
 }
 
 /** Retrieve the latest memory entries */
 export async function fetchMemoryFeed(n = 20): Promise<MemoryEntry[]> {
-  const res = await memoryApi.get(`/memory/last?n=${n}`);
-  return res.data?.entries || [];
+  try {
+    const res = await memoryApi.get(`/memory/last?n=${n}`);
+    return res.data?.entries || [];
+  } catch (err) {
+    console.error('fetchMemoryFeed error', err);
+    throw new Error('Failed to fetch memory feed');
+  }
 }
 
 /** Retrieve recent insights/reflections */
 export async function fetchInsights(): Promise<InsightEntry[]> {
-  const res = await memoryApi.get('/memory/insights');
-  return res.data?.entries || [];
+  try {
+    const res = await memoryApi.get('/memory/insights');
+    return res.data?.entries || [];
+  } catch (err) {
+    console.error('fetchInsights error', err);
+    throw new Error('Failed to fetch insights');
+  }
 }
 
 /** Fetch active projects */
 export async function fetchProjects(): Promise<ProjectEntry[]> {
-  const res = await projectApi.get('/projects');
-  return res.data || [];
+  try {
+    const res = await projectApi.get('/projects');
+    return res.data || [];
+  } catch (err) {
+    console.error('fetchProjects error', err);
+    throw new Error('Failed to fetch projects');
+  }
 }
 
 interface AssistantPayload {
@@ -64,6 +84,11 @@ interface AssistantPayload {
 export async function sendAssistantMessage(
   payload: AssistantPayload
 ): Promise<{ response: string }> {
-  const res = await axios.post('/proxy/ai', payload);
-  return res.data;
+  try {
+    const res = await axios.post('/proxy/ai', payload);
+    return res.data;
+  } catch (err) {
+    console.error('sendAssistantMessage error', err);
+    throw new Error('Failed to send message');
+  }
 }

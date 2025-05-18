@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ChatMessage, { Message } from './ChatMessage';
+import { useMemory } from '../../context/MemoryContext';
 
 interface DialogSettings {
   model: 'gpt-4o' | 'claude-3';
@@ -8,8 +9,6 @@ interface DialogSettings {
   openAiKey: string;
   anthropicKey: string;
 }
-
-const MEMORY_API = 'http://localhost:8001';
 
 const defaultSettings: DialogSettings = {
   model: 'gpt-4o',
@@ -34,6 +33,7 @@ const EnhancedChatInterface: React.FC = () => {
   const [toast, setToast] = useState<string | null>(null);
   const [mode, setMode] = useState<'command' | 'reflect' | 'plan'>('command');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { addEntry, error, clearError } = useMemory();
 
   // Persist history to localStorage and keep scroll at bottom
   useEffect(() => {
@@ -51,6 +51,13 @@ const EnhancedChatInterface: React.FC = () => {
     setToast(text);
     setTimeout(() => setToast(null), 3000);
   };
+
+  useEffect(() => {
+    if (error) {
+      showTempToast(error);
+      clearError();
+    }
+  }, [error]);
 
   const clearConversation = () => {
     if (window.confirm('Are you sure you want to clear this conversation?')) {
@@ -98,18 +105,14 @@ const EnhancedChatInterface: React.FC = () => {
       setMessages(prev => [...prev, assistantMsg]);
 
       try {
-        await fetch(`${MEMORY_API}/memory/manual`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: mode === 'reflect' ? 'reflection' : 'interaction',
-            content: `${prompt}\n---\n${reply}`,
-            metadata: { 
-              mode, 
-              model: settings.model,
-              temperature: settings.temperature
-            }
-          })
+        await addEntry({
+          type: mode === 'reflect' ? 'reflection' : 'interaction',
+          content: `${prompt}\n---\n${reply}`,
+          metadata: {
+            mode,
+            model: settings.model,
+            temperature: settings.temperature
+          }
         });
         showTempToast('Saved to memory');
       } catch (err) {

@@ -16,7 +16,7 @@ const ICON_MAP: Record<string, string> = {
 };
 
 const MemoryList: React.FC = () => {
-  const { entries, refresh } = useMemory();
+  const { entries, refresh, error } = useMemory();
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedEntries, setExpandedEntries] = useState<Set<string>>(new Set());
@@ -78,6 +78,11 @@ const MemoryList: React.FC = () => {
             Refresh
           </button>
         </div>
+        {error && (
+          <div className="mt-2 text-red-700 bg-red-100 dark:bg-red-900/30 dark:text-red-300 p-2 rounded">
+            {error}
+          </div>
+        )}
       </div>
 
       <div className="border-b border-gray-200 dark:border-gray-700 p-4 space-y-4">

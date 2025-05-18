@@ -35,6 +35,12 @@ const CommandDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('');
   const messagesEnd = useRef<HTMLDivElement | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
+
+  const showTempToast = (text: string) => {
+    setToast(text);
+    setTimeout(() => setToast(null), 3000);
+  };
 
   useEffect(() => {
     refreshAll();
@@ -45,16 +51,21 @@ const CommandDashboard: React.FC = () => {
   }, [messages]);
 
   const refreshAll = async () => {
-    const [g, m, i, p] = await Promise.all([
-      fetchGoals(),
-      fetchMemoryFeed(),
-      fetchInsights(),
-      fetchProjects(),
-    ]).catch(() => [[], [], [], []]);
-    setGoals(g as GoalEntry[]);
-    setMemoryFeed(m as MemoryEntry[]);
-    setInsights(i as InsightEntry[]);
-    setProjects(p as ProjectEntry[]);
+    try {
+      const [g, m, i, p] = await Promise.all([
+        fetchGoals(),
+        fetchMemoryFeed(),
+        fetchInsights(),
+        fetchProjects(),
+      ]);
+      setGoals(g);
+      setMemoryFeed(m);
+      setInsights(i);
+      setProjects(p);
+    } catch (err) {
+      console.error('Failed to refresh data', err);
+      showTempToast('Failed to load data');
+    }
   };
 
   const sendMessage = async () => {
@@ -79,6 +90,7 @@ const CommandDashboard: React.FC = () => {
       setMessages((prev) => [...prev, reply]);
     } catch (err) {
       console.error('assistant error', err);
+      showTempToast('Assistant error');
     } finally {
       setLoading(false);
     }
@@ -201,6 +213,11 @@ const CommandDashboard: React.FC = () => {
         ))}
         {!insights.length && <div className="text-gray-400 text-sm">No insights</div>}
       </aside>
+      {toast && (
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow">
+          {toast}
+        </div>
+      )}
     </div>
   );
 };
