@@ -6,7 +6,8 @@ allowing retrieval, searching, and creation of memory entries.
 """
 
 from typing import Dict, List, Optional, Any
-from fastapi import FastAPI, HTTPException, Query, Path, Body, status
+from enum import Enum
+from fastapi import FastAPI, HTTPException, Query, Path, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from datetime import datetime
@@ -52,7 +53,14 @@ class MemoryEntryResponse(BaseModel):
 
 class MemoryCreateRequest(BaseModel):
     """Request model for creating a memory entry"""
-    type: str = Field(..., description="Type of memory entry (e.g., 'event', 'decision', 'insight')")
+    class EntryType(str, Enum):
+        event = "event"
+        decision = "decision"
+        insight = "insight"
+        project = "project"
+        error = "error"
+
+    type: EntryType = Field(..., description="Type of memory entry")
     content: str = Field(..., description="Content of the memory entry")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional contextual information")
 
@@ -90,6 +98,7 @@ async def root():
         "description": "Access and interact with memory data",
         "endpoints": [
             "/memory/last",
+            "/memory/id/{entry_id}",
             "/memory/type/{entry_type}",
             "/memory/search",
             "/memory/insights",
@@ -128,6 +137,21 @@ async def get_last_entries(n: int = Query(10, ge=1, le=100, description="Number 
 
 
 @app.get(
+    "/memory/id/{entry_id}",
+    response_model=MemoryEntryResponse,
+    tags=["Memory Retrieval"],
+    summary="Get memory entry by ID",
+    description="Retrieve a specific memory entry by its unique ID",
+)
+async def get_entry_by_id(entry_id: str = Path(..., description="Memory entry ID")):
+    """Get a specific memory entry by ID."""
+    entry = memory_store.get_by_id(entry_id)
+    if not entry:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found")
+    return memory_entry_to_response(entry)
+
+
+@app.get(
     "/memory/type/{entry_type}",
     response_model=MemoryListResponse,
     tags=["Memory Retrieval"],
@@ -135,7 +159,7 @@ async def get_last_entries(n: int = Query(10, ge=1, le=100, description="Number 
     description="Retrieve memory entries of a specific type (e.g., 'decision', 'event', 'insight')"
 )
 async def get_entries_by_type(
-    entry_type: str = Path(..., description="Type of memory entries to retrieve"),
+    entry_type: MemoryCreateRequest.EntryType = Path(..., description="Type of memory entries to retrieve"),
     limit: int = Query(50, ge=1, le=500, description="Maximum number of entries to return")
 ):
     """
@@ -151,7 +175,7 @@ async def get_entries_by_type(
     Returns:
         MemoryListResponse with the retrieved entries
     """
-    entries = memory_store.retrieve_by_type(entry_type)
+    entries = memory_store.retrieve_by_type(entry_type.value)
     
     # Sort by timestamp (newest first) and apply limit
     sorted_entries = sorted(entries, key=lambda x: x.timestamp, reverse=True)[:limit]
@@ -292,20 +316,20 @@ async def create_manual_entry(entry_request: MemoryCreateRequest):
         # Choose the appropriate logging function based on type
         entry_id = None
         
-        if entry_request.type == "event":
+        if entry_request.type == MemoryCreateRequest.EntryType.event:
             entry_id = log_event(entry_request.content, entry_request.metadata)
-        elif entry_request.type == "decision":
+        elif entry_request.type == MemoryCreateRequest.EntryType.decision:
             entry_id = log_decision(entry_request.content, entry_request.metadata)
-        elif entry_request.type == "insight":
+        elif entry_request.type == MemoryCreateRequest.EntryType.insight:
             source = entry_request.metadata.get("source", "manual_api")
             entry_id = log_insight(entry_request.content, source, entry_request.metadata)
-        elif entry_request.type == "project":
+        elif entry_request.type == MemoryCreateRequest.EntryType.project:
             project_name = entry_request.metadata.get("project_name", "Unnamed Project")
             entry_id = log_project(entry_request.content, project_name, entry_request.metadata)
         else:
             # For other types, create a generic entry
             entry = MemoryEntry(
-                type=entry_request.type,
+                type=entry_request.type.value,
                 content=entry_request.content,
                 metadata=entry_request.metadata
             )

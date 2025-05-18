@@ -43,6 +43,7 @@ uvicorn backend.api.memory_api:app --reload --port 8001
 Example endpoints:
 
 - `GET /memory/last` – retrieve the most recent entries
+- `GET /memory/id/{entry_id}` – retrieve a specific entry by ID
 - `POST /memory/manual` – create a new memory entry
 
 ### Adaptive Plan API
