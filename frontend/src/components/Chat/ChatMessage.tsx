@@ -1,5 +1,6 @@
 import React from 'react';
 import { marked } from 'marked';
+import DOMPurify from '../../libs/dompurify';
 
 export interface Message {
   id: string;
@@ -39,7 +40,8 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   }
 
   // For assistant messages - using a simpler version without 'prose' class
-  const html = { __html: marked.parse(message.content) };
+  const sanitized = DOMPurify.sanitize(marked.parse(message.content));
+  const html = { __html: sanitized };
 
   return (
     <div className="flex flex-col mb-3 sm:mb-4 animate-fade-in slide-in">
