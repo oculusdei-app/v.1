@@ -1,25 +1,87 @@
-#!/bin/zsh
+#!/bin/bash
+# ── DEVELOPMENT SERVER ─────────────────────────────────────────────
+# Starts both backend and frontend development servers
+
+# ──────────────────────────────────────────────────────────────────────────────
+# dev.sh — Oculus Dei local stack
+# Adds PYTHONPATH so uvicorn sees the `backend` package.
+# ──────────────────────────────────────────────────────────────────────────────
 set -e
+export PYTHONPATH="$(pwd)"
 
-# Start auto-pulling latest changes from origin/main every 10 seconds
-(
-  while true; do
-    git pull --ff-only origin main >/dev/null 2>&1 || echo "git pull failed"
-    sleep 10
-  done
-) &
-PULL_PID=$!
+# Handle Ctrl+C gracefully
+trap cleanup INT
+cleanup() {
+  echo "📋 Shutting down all services..."
+  kill $(jobs -p) 2>/dev/null
+  exit 0
+}
 
-# Start backend with hot reload
-uvicorn backend.api.adaptive_plan_api:app --reload --port 8000 &
-BACKEND_PID=$!
+# Check requirements
+check_requirements() {
+  echo "🔍 Checking requirements..."
+  
+  if ! [ -d backend/venv ]; then
+    echo "❌ Error: Python virtual environment not found."
+    echo "   Please run ./bootstrap.sh first."
+    exit 1
+  fi
+  
+  if ! [ -d frontend/node_modules ]; then
+    echo "❌ Error: Frontend dependencies not installed."
+    echo "   Please run ./bootstrap.sh first."
+    exit 1
+  fi
+}
 
-# Start frontend development server
-npm --prefix frontend run dev -- --port 5173 &
-FRONTEND_PID=$!
+# Start backend server
+start_backend() {
+  echo "🔄 Starting backend server on port 8000..."
+  cd backend
+  source venv/bin/activate
+  python -m uvicorn api.adaptive_plan_api:app --host 0.0.0.0 --port 8000 --reload &
+  cd ..
+}
 
-# Ensure child processes are terminated on exit
-trap "kill $PULL_PID $BACKEND_PID $FRONTEND_PID" INT TERM EXIT
+# Start frontend server
+start_frontend() {
+  echo "🔄 Starting frontend server on port 5173..."
+  cd frontend
+  # запускаем настоящий Vite
+  npm run dev &
+  cd ..
+}
 
-# Wait for backend and frontend to exit
-wait $BACKEND_PID $FRONTEND_PID
+# Start memory API server
+start_memory_api() {
+  echo "🔄 Starting memory API server on port 8001..."
+  cd backend
+  source venv/bin/activate
+  python -m uvicorn api.memory_api:app --host 0.0.0.0 --port 8001 --reload &
+  cd ..
+}
+
+# Main function
+main() {
+  echo "⚙️  Oculus Dei Development Environment"
+  echo "──────────────────────────────────────"
+  
+  check_requirements
+  
+  start_backend
+  start_memory_api
+  start_frontend
+  
+  echo "✅ All services started!"
+  echo "   Backend: http://localhost:8000"
+  echo "   Memory API: http://localhost:8001"
+  echo "   Frontend: http://localhost:5173"
+  echo "   Press Ctrl+C to stop all services"
+  echo "──────────────────────────────────────"
+  
+  # Wait for all background processes to complete
+  wait
+}
+
+# Run the main function
+main
