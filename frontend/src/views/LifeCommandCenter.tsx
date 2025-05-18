@@ -20,10 +20,15 @@ interface ApiStatusData {
   endpoint: string;
 }
 
+const MEMORY_API =
+  import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001';
+const PLAN_API =
+  import.meta.env.VITE_PLAN_API_URL || 'http://localhost:8000';
+
 const LifeCommandCenter: React.FC = () => {
   const [systemStatus, setSystemStatus] = useState<ApiStatusData[]>([
-    { name: 'Memory API', status: 'active', endpoint: 'http://localhost:8001' },
-    { name: 'Plan API', status: 'active', endpoint: 'http://localhost:8000' },
+    { name: 'Memory API', status: 'active', endpoint: MEMORY_API },
+    { name: 'Plan API', status: 'active', endpoint: PLAN_API },
     { name: 'Reflection System', status: 'processing', endpoint: '' }
   ]);
 

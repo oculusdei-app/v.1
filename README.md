@@ -105,10 +105,16 @@ A lightweight React interface is provided in the `frontend/` directory. It allow
 
 ### Setup
 
-Install Node dependencies:
+Copy the example environment file and adjust the API endpoints if needed:
 
 ```bash
 cd frontend
+cp .env.example .env
+```
+
+Install Node dependencies:
+
+```bash
 npm install
 ```
 
@@ -117,9 +123,6 @@ Start the development server:
 ```bash
 npm run dev
 ```
-
-The app will be available at `http://localhost:5173` and assumes the backend memory API is running on `http://localhost:8001`.
-Requests to `/proxy/ai` are automatically forwarded to `http://localhost:8003` via Vite's proxy configuration.
 
 ## Combined Local Development
 

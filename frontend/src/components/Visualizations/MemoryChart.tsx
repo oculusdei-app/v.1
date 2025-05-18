@@ -6,7 +6,8 @@ interface ChartData {
   color: string;
 }
 
-const MEMORY_API = 'http://localhost:8001';
+const MEMORY_API =
+  import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001';
 
 const MemoryChart: React.FC = () => {
   const [chartData, setChartData] = useState<ChartData[]>([]);
