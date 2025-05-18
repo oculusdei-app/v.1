@@ -65,3 +65,24 @@ Example endpoints:
 - `POST /plan` – generate an adaptive plan based on the registered project
 
 Both services will be available locally at `http://localhost:<port>` once started.
+
+## Frontend (React + Vite)
+
+A lightweight React interface is provided in the `frontend/` directory. It allows creating memory entries and viewing the most recent stored items.
+
+### Setup
+
+Install Node dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+Start the development server:
+
+```bash
+npm run dev
+```
+
+The app will be available at `http://localhost:5173` and assumes the backend memory API is running on `http://localhost:8001`.
