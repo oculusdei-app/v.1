@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import EnhancedChatInterface from '../components/Chat/EnhancedChatInterface';
 import MemoryChart from '../components/Visualizations/MemoryChart';
+import { useMemory } from '../context/MemoryContext';
 
 /**
  * LifeCommandCenter
@@ -29,8 +31,11 @@ const LifeCommandCenter: React.FC = () => {
     { name: 'Plan API', status: 'active', endpoint: PLAN_API },
     { name: 'Reflection System', status: 'processing', endpoint: '' }
   ]);
-  
+
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showApiPanel, setShowApiPanel] = useState(false);
+  const navigate = useNavigate();
+  const { refresh } = useMemory();
 
   // Simulate checking status of APIs on component mount
   useEffect(() => {
@@ -195,7 +200,10 @@ const LifeCommandCenter: React.FC = () => {
               </h2>
             </div>
             <div className="card-body p-3 xs:p-4 sm:p-6 bg-white/50 dark:bg-dark-800/50 grid grid-cols-2 gap-2 xs:gap-3 sm:gap-4 stagger-fade-in">
-              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-blue-50/80 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-blue-100/50 dark:border-blue-800/30">
+              <button
+                onClick={() => navigate('/memory')}
+                className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-blue-50/80 dark:bg-blue-900/20 text-blue-600 dark:text-blue-300 rounded-xl hover:bg-blue-100 dark:hover:bg-blue-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-blue-100/50 dark:border-blue-800/30"
+              >
                 <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-blue-100 dark:bg-blue-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -203,7 +211,10 @@ const LifeCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-xs font-medium">New Memory</span>
               </button>
-              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-purple-50/80 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-purple-100/50 dark:border-purple-800/30">
+              <button
+                onClick={() => navigate('/projects')}
+                className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-purple-50/80 dark:bg-purple-900/20 text-purple-600 dark:text-purple-300 rounded-xl hover:bg-purple-100 dark:hover:bg-purple-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-purple-100/50 dark:border-purple-800/30"
+              >
                 <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-purple-100 dark:bg-purple-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -211,7 +222,10 @@ const LifeCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-xs font-medium">View Projects</span>
               </button>
-              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-green-50/80 dark:bg-green-900/20 text-green-600 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-green-100/50 dark:border-green-800/30">
+              <button
+                onClick={refresh}
+                className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-green-50/80 dark:bg-green-900/20 text-green-600 dark:text-green-300 rounded-xl hover:bg-green-100 dark:hover:bg-green-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-green-100/50 dark:border-green-800/30"
+              >
                 <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-green-100 dark:bg-green-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -219,7 +233,10 @@ const LifeCommandCenter: React.FC = () => {
                 </div>
                 <span className="text-xs font-medium">Refresh Data</span>
               </button>
-              <button className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-amber-50/80 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-amber-100/50 dark:border-amber-800/30">
+              <button
+                onClick={() => setShowApiPanel(true)}
+                className="btn-ghost flex flex-col items-center justify-center p-2 xs:p-3 sm:p-4 bg-amber-50/80 dark:bg-amber-900/20 text-amber-600 dark:text-amber-300 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-800/30 hover:scale-105 transition-all duration-200 shadow-sm hover:shadow border border-amber-100/50 dark:border-amber-800/30"
+              >
                 <div className="w-8 h-8 xs:w-9 xs:h-9 sm:w-10 sm:h-10 rounded-full bg-amber-100 dark:bg-amber-800/30 flex items-center justify-center mb-1 xs:mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -269,6 +286,43 @@ const LifeCommandCenter: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {showApiPanel && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+          <div className="card w-full max-w-md scale-in elevation-3 relative">
+            <div className="card-header flex justify-between items-center bg-gradient-to-r from-purple-50/80 to-purple-100/60 dark:from-purple-900/20 dark:to-purple-800/10">
+              <h3 className="font-semibold text-purple-800 dark:text-purple-300 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                API Status
+              </h3>
+              <button onClick={() => setShowApiPanel(false)} className="btn-icon-ghost text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <div className="card-body p-4 space-y-3 divide-y divide-gray-100 dark:divide-gray-800/50">
+              {systemStatus.map((api, idx) => {
+                const colors = getStatusColor(api.status);
+                return (
+                  <div key={idx} className={`flex justify-between items-center ${idx > 0 ? 'pt-3' : ''}`}>
+                    <span className="flex items-center text-gray-700 dark:text-gray-300">
+                      <span className={`w-2 h-2 mr-2 rounded-full ${colors.dot} animate-pulse`}></span>
+                      {api.name}
+                    </span>
+                    <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium ${colors.bg} ${colors.text}`}>{api.status.charAt(0).toUpperCase() + api.status.slice(1)}</span>
+                  </div>
+                );
+              })}
+            </div>
+            <div className="bg-gradient-to-r from-purple-50/50 to-purple-100/30 dark:from-purple-900/10 dark:to-purple-800/5 p-3 text-xs text-gray-500 dark:text-gray-400 border-t border-purple-100/50 dark:border-purple-800/30 flex justify-between items-center">
+              <span>Last checked: {new Date().toLocaleTimeString()}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -124,8 +124,6 @@ Start the development server:
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173`. Backend service URLs are configured via `VITE_MEMORY_API_URL` and `VITE_PLAN_API_URL` in `.env`.
-
 ## Combined Local Development
 
 To run all backend services (adaptive plan, memory store and assistant proxy)

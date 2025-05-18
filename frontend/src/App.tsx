@@ -5,6 +5,8 @@ import { MemoryProvider } from './context/MemoryContext';
 import AppLayout from './components/Layout/AppLayout';
 import LifeCommandCenter from './views/LifeCommandCenter';
 import EnhancedChatInterface from './components/Chat/EnhancedChatInterface';
+import MemoryPage from './views/MemoryPage';
+import ProjectsView from './views/ProjectsView';
 
 const App: React.FC = () => {
   return (
@@ -14,6 +16,8 @@ const App: React.FC = () => {
           <AppLayout>
             <Routes>
               <Route path="/" element={<LifeCommandCenter />} />
+              <Route path="/memory" element={<MemoryPage />} />
+              <Route path="/projects" element={<ProjectsView />} />
               <Route path="/chat" element={<EnhancedChatInterface />} />
             </Routes>
           </AppLayout>
