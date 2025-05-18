@@ -24,7 +24,7 @@ interface MemoryContextType {
   getEntriesByType: (type: string) => Promise<MemoryEntry[]>;
 }
 
-const API_BASE_URL = 'http://localhost:8001';
+const API_BASE_URL = import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001';
 
 const MemoryContext = React.createContext<MemoryContextType | undefined>(undefined);
 

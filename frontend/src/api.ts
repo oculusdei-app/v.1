@@ -1,10 +1,14 @@
 import axios from 'axios';
 
 /** Base Axios instance for the memory service */
-const memoryApi = axios.create({ baseURL: 'http://localhost:8001' });
+const memoryApi = axios.create({
+  baseURL: import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001'
+});
 
 /** Base Axios instance for the planning/project service */
-const projectApi = axios.create({ baseURL: 'http://localhost:8000' });
+const projectApi = axios.create({
+  baseURL: import.meta.env.VITE_PLAN_API_URL || 'http://localhost:8000'
+});
 
 export interface MemoryEntry {
   id: string;

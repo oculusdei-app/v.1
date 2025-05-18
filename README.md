@@ -112,13 +112,22 @@ cd frontend
 npm install
 ```
 
+Copy the example environment file and update values if needed:
+
+```bash
+cp frontend/.env.example frontend/.env
+# Edit frontend/.env to match your backend URLs
+```
+
 Start the development server:
 
 ```bash
 npm run dev
 ```
 
-The app will be available at `http://localhost:5173` and assumes the backend memory API is running on `http://localhost:8001`.
+The app will be available at `http://localhost:5173`.
+Backend endpoints are configured via `frontend/.env` using
+`VITE_MEMORY_API_URL` and `VITE_PLAN_API_URL`.
 
 ## Combined Local Development
 

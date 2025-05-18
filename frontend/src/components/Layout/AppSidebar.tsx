@@ -14,8 +14,8 @@ interface GoalEntry {
   timestamp: string;
 }
 
-const MEMORY_API = 'http://localhost:8001';
-const PLAN_API = 'http://localhost:8000';
+const MEMORY_API = import.meta.env.VITE_MEMORY_API_URL || 'http://localhost:8001';
+const PLAN_API = import.meta.env.VITE_PLAN_API_URL || 'http://localhost:8000';
 
 const AppSidebar: React.FC = () => {
   const [projects, setProjects] = useState<ProjectSummary[]>([]);
