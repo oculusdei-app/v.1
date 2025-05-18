@@ -61,6 +61,15 @@ start_memory_api() {
   cd ..
 }
 
+# Start assistant proxy server
+start_assistant_api() {
+  echo "🔄 Starting assistant API server on port 8003..."
+  cd backend
+  source venv/bin/activate
+  python -m uvicorn api.assistant_api:app --host 0.0.0.0 --port 8003 --reload & BACK3_PID=$!
+  cd ..
+}
+
 # ── git-watch loop ────────────────────────────────────────────────────────────
 echo "🌀  git-watch loop started (PID $$)"
 (
@@ -74,10 +83,10 @@ echo "🌀  git-watch loop started (PID $$)"
       git pull --ff-only origin main
 
       # ── stop old processes ───────────────────────────────────────────────
-      kill $BACK1_PID $BACK2_PID $FRONT_PID 2>/dev/null || true
+      kill $BACK1_PID $BACK2_PID $BACK3_PID $FRONT_PID 2>/dev/null || true
 
       # жёстко освобождаем порты (vite и оба uvicorn-а)
-      for PORT in 5173 8000 8001; do
+      for PORT in 5173 8000 8001 8003; do
         if lsof -i :$PORT -t >/dev/null 2>&1; then
           lsof -ti :$PORT | xargs kill -9
         fi
@@ -86,6 +95,7 @@ echo "🌀  git-watch loop started (PID $$)"
       # restart backend + frontend
       uvicorn backend.api.adaptive_plan_api:app --reload --port 8000 & BACK1_PID=$!
       uvicorn backend.api.memory_api:app        --reload --port 8001 & BACK2_PID=$!
+      uvicorn backend.api.assistant_api:app     --reload --port 8003 & BACK3_PID=$!
       
       # ждём максимум 5 сек, пока 5173 освободится
       for i in {1..10}; do
@@ -103,19 +113,21 @@ PULL_PID=$!
 
 # Main function
 main() {
-  echo "⚙️  Oculus Dei Development Environment"
+  echo "⚙ Starting development stack"
   echo "──────────────────────────────────────"
   
   check_requirements
   
   start_backend
   start_memory_api
+  start_assistant_api
   start_frontend
   
   echo "✅ All services started!"
-  echo "   Backend: http://localhost:8000"
-  echo "   Memory API: http://localhost:8001"
-  echo "   Frontend: http://localhost:5173"
+  echo "   Backend:   http://localhost:8000"
+  echo "   Memory API:    http://localhost:8001"
+  echo "   Assistant API: http://localhost:8003"
+  echo "   Frontend:      http://localhost:5173"
   echo "   Press Ctrl+C to stop all services"
   echo "──────────────────────────────────────"
   

@@ -8,6 +8,7 @@ This repository contains the backend components for the **Oculus Dei** life mana
   - `memory_api.py` – access to the memory store
   - `adaptive_plan_api.py` – register projects and generate adaptive plans
   - `reflector_api.py` – trigger reflection cycles
+  - `assistant_api.py` – proxy requests to OpenAI or Anthropic
 - `backend/memory/` – in-memory storage and retrieval utilities
 - `backend/core/` – project registry and life optimizer modules
 - `backend/agent/` – presence controller used by the optimizer
@@ -84,6 +85,20 @@ Key endpoint:
 
 - `POST /reflect` – trigger a reflection cycle and return the prompt
 
+### Assistant Proxy API
+
+Proxy service on port `8003` that forwards prompts to either OpenAI or
+Anthropic based on provided API keys.
+
+```bash
+python backend/api/assistant_api.py
+```
+
+Environment variables used if keys are not supplied in the request:
+
+- `OPENAI_API_KEY`
+- `ANTHROPIC_API_KEY`
+
 ## Frontend (React + Vite)
 
 A lightweight React interface is provided in the `frontend/` directory. It allows creating memory entries, viewing recent items, and now includes a simple visualization of memory types with optional dark mode support.
@@ -107,8 +122,9 @@ The app will be available at `http://localhost:5173` and assumes the backend mem
 
 ## Combined Local Development
 
-To run both the FastAPI backend on port `8000` and the React frontend on port `5173`
-with automatic updates from `origin/main`, use the `dev.sh` script:
+To run all backend services (adaptive plan, memory store and assistant proxy)
+alongside the React frontend with automatic updates from `origin/main`, use the
+`dev.sh` script:
 
 ```bash
 ./dev.sh
