@@ -132,6 +132,11 @@ class MemoryStore:
         """
         with self._lock:
             return list(self.type_index.get(entry_type, []))
+
+    def get_all(self) -> List[MemoryEntry]:
+        """Return all entries sorted chronologically (newest first)."""
+        with self._lock:
+            return sorted(self.entries, key=lambda e: e.timestamp, reverse=True)
     
     def search_by_text(self, keyword: str) -> List[MemoryEntry]:
         """

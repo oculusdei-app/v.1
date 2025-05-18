@@ -67,6 +67,8 @@ class MemoryCreateRequest(BaseModel):
         insight = "insight"
         project = "project"
         error = "error"
+        reflection = "reflection"
+        interaction = "interaction"
 
     type: EntryType = Field(..., description="Type of memory entry")
     content: str = Field(..., description="Content of the memory entry")
