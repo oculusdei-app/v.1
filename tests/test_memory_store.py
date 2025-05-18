@@ -13,6 +13,21 @@ class MemoryStoreTest(unittest.TestCase):
     def tearDown(self):
         self.store.clear()
 
+    def test_smoke_test(self):
+        """Simple smoke test to verify basic memory store functionality"""
+        # Create a memory entry
+        entry_id = log_event("Smoke test entry")
+        self.assertIsNotNone(entry_id)
+        
+        # Retrieve it
+        entry = self.store.get_by_id(entry_id)
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.content, "Smoke test entry")
+        
+        # Check it appears in the list
+        all_entries = self.store.get_all()
+        self.assertGreaterEqual(len(all_entries), 1)
+
     def test_store_and_get_by_id(self):
         entry_id = log_event("test event", {})
         entry = self.store.get_by_id(entry_id)
