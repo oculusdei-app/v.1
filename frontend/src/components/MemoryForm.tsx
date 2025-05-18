@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useMemory } from '../context/MemoryContext';
 
 const MEMORY_TYPES = ['event', 'decision', 'insight', 'project'];
 
@@ -6,21 +7,17 @@ const MemoryForm: React.FC = () => {
   const [type, setType] = useState('event');
   const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
+  const { addEntry } = useMemory();
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content) return;
 
-    const res = await fetch('http://localhost:8001/memory/manual', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ type, content, metadata: {} })
-    });
-
-    if (res.ok) {
+    try {
+      await addEntry({ type, content, metadata: {} });
       setContent('');
       setMessage('Memory stored');
-    } else {
+    } catch {
       setMessage('Failed to store');
     }
   };

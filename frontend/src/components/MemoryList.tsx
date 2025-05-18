@@ -1,26 +1,8 @@
-import React, { useEffect, useState } from 'react';
-
-interface MemoryEntry {
-  id: string;
-  timestamp: string;
-  type: string;
-  content: string;
-}
+import React from 'react';
+import { useMemory } from '../context/MemoryContext';
 
 const MemoryList: React.FC = () => {
-  const [entries, setEntries] = useState<MemoryEntry[]>([]);
-
-  const fetchEntries = async () => {
-    const res = await fetch('http://localhost:8001/memory/last?n=10');
-    if (res.ok) {
-      const data = await res.json();
-      setEntries(data.entries || []);
-    }
-  };
-
-  useEffect(() => {
-    fetchEntries();
-  }, []);
+  const { entries } = useMemory();
 
   return (
     <div className="bg-white p-4 rounded shadow">

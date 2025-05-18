@@ -73,7 +73,7 @@ Both services will be available locally at `http://localhost:<port>` once starte
 
 ## Frontend (React + Vite)
 
-A lightweight React interface is provided in the `frontend/` directory. It allows creating memory entries and viewing the most recent stored items.
+A lightweight React interface is provided in the `frontend/` directory. It allows creating memory entries, viewing recent items, and now includes a simple visualization of memory types with optional dark mode support.
 
 ### Setup
 
