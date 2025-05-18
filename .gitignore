@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Node / Vite / React
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/node_modules/.vite/
+
+# Python
+__pycache__/
+*.py[cod]
