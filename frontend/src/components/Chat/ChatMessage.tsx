@@ -20,10 +20,10 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
 
   if (message.role === 'user') {
     return (
-      <div className="flex flex-col items-end mb-4 animate-fade-in">
+      <div className="flex flex-col items-end mb-3 sm:mb-4 animate-fade-in">
         <div className="flex items-end">
           <div className="order-2 mx-2 flex flex-col items-end">
-            <div className="px-4 py-3 rounded-t-lg rounded-bl-lg bg-brand-600 text-white max-w-md break-words shadow-sm hover:shadow-md transition-all duration-200">
+            <div className="px-3 sm:px-4 py-2 sm:py-3 rounded-t-lg rounded-bl-lg bg-brand-600 text-white max-w-[85vw] sm:max-w-md break-words shadow-sm hover:shadow-md transition-all duration-200 text-sm sm:text-base">
               {message.content}
             </div>
             <span className="text-xs text-gray-500 mt-1">{formattedTime}</span>
@@ -42,7 +42,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
   const html = { __html: marked.parse(message.content) };
 
   return (
-    <div className="flex flex-col mb-4 animate-fade-in slide-in">
+    <div className="flex flex-col mb-3 sm:mb-4 animate-fade-in slide-in">
       <div className="flex items-end">
         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center text-white shadow-sm">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 animate-pulse-slow">
@@ -51,7 +51,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message }) => {
         </div>
         <div className="mx-2 flex flex-col">
           <div 
-            className="px-4 py-3 rounded-t-lg rounded-br-lg bg-white dark:bg-dark-800 border border-dark-100 dark:border-dark-700 shadow-sm text-dark-800 dark:text-dark-200 max-w-md break-words hover:shadow-md transition-all duration-200"
+            className="px-3 sm:px-4 py-2 sm:py-3 rounded-t-lg rounded-br-lg bg-white dark:bg-dark-800 border border-dark-100 dark:border-dark-700 shadow-sm text-dark-800 dark:text-dark-200 max-w-[85vw] sm:max-w-md break-words hover:shadow-md transition-all duration-200 text-sm sm:text-base"
             dangerouslySetInnerHTML={html}
           />
           <span className="text-xs text-gray-500 mt-1">{formattedTime}</span>

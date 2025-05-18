@@ -7,6 +7,9 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      fontSize: {
+        '2xs': '0.65rem',
+      },
       colors: {
         // Основные цвета бренда
         'brand': {
@@ -303,6 +306,11 @@ module.exports = {
       }),
       screens: {
         'xs': '480px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
         '3xl': '1780px',
       },
       zIndex: {

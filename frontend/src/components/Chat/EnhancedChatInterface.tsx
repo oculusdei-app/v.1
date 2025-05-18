@@ -134,18 +134,18 @@ const EnhancedChatInterface: React.FC = () => {
   return (
     <div className="flex flex-col h-full relative bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
-        <div className="flex space-x-2">
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-3 sm:p-4 flex flex-wrap sm:flex-nowrap justify-between items-center gap-2">
+        <div className="flex space-x-2 w-full sm:w-auto">
           <select
             value={mode}
             onChange={(e) => setMode(e.target.value as 'command' | 'reflect' | 'plan')}
-            className="form-input px-3 py-1 text-sm w-32"
+            className="form-input px-2 sm:px-3 py-1 text-sm w-full sm:w-32"
           >
             <option value="command">Command</option>
             <option value="reflect">Reflect</option>
             <option value="plan">Plan</option>
           </select>
-          <div className="flex items-center">
+          <div className="flex items-center ml-2 sm:ml-0">
             <div className={`w-2 h-2 rounded-full mr-2 ${mode === 'command' ? 'bg-blue-500' : mode === 'reflect' ? 'bg-purple-500' : 'bg-green-500'}`}></div>
             <span className="text-sm font-medium">
               {mode === 'command' ? 'Command Mode' : mode === 'reflect' ? 'Reflection Mode' : 'Planning Mode'}
@@ -176,17 +176,31 @@ const EnhancedChatInterface: React.FC = () => {
       </div>
 
       {/* Message area */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-2">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-4 md:px-6 py-4 sm:py-6 space-y-3 bg-gray-50/50 dark:bg-dark-900/50">
         {messages.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 space-y-4">
-            <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-blue-600 dark:text-blue-400">
+          <div className="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400 space-y-4 sm:space-y-6">
+            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-400 to-blue-500 dark:from-indigo-600 dark:to-blue-700 flex items-center justify-center shadow-lg p-5 animate-pulse-slow">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-full h-full text-white">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
               </svg>
             </div>
-            <div className="text-xl font-medium">Start a conversation</div>
-            <div className="text-sm max-w-md text-center">
+            <div className="text-xl sm:text-2xl font-medium text-indigo-700 dark:text-indigo-300">Start a conversation</div>
+            <div className="text-sm sm:text-base max-w-md text-center bg-white/70 dark:bg-dark-800/30 p-3 sm:p-4 rounded-xl border border-indigo-100/50 dark:border-indigo-800/30 shadow-sm">
               Ask me questions about your schedule, projects, or request reflections on your progress.
+            </div>
+            <div className="flex flex-wrap sm:flex-nowrap justify-center gap-2 sm:space-x-3 mt-2 w-full px-4 sm:px-0">
+              <button className="px-4 py-2 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-800/40 text-indigo-700 dark:text-indigo-300 rounded-lg border border-indigo-100/50 dark:border-indigo-800/30 shadow-sm hover:shadow transition-all duration-200 text-sm font-medium flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Learn More
+              </button>
+              <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-sm hover:shadow transition-all duration-200 text-sm font-medium flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Get Started
+              </button>
             </div>
           </div>
         )}
@@ -208,8 +222,8 @@ const EnhancedChatInterface: React.FC = () => {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-b from-white to-gray-50 dark:from-dark-800 dark:to-dark-900/90">
-        <div className="flex items-end space-x-2">
+      <div className="border-t border-indigo-100/50 dark:border-indigo-800/30 p-3 sm:p-4 md:p-5 bg-gradient-to-b from-indigo-50/30 to-white/90 dark:from-indigo-900/10 dark:to-dark-900/80">
+        <div className="flex items-end space-x-2 sm:space-x-3">
           <div className="flex-1 relative">
             <textarea
               value={input}
@@ -217,27 +231,27 @@ const EnhancedChatInterface: React.FC = () => {
               onKeyDown={handleKeyDown}
               rows={1}
               placeholder={`Type your message in ${mode} mode...`}
-              className="form-input flex-1 min-h-[44px] max-h-32 resize-none py-3 pr-12 shadow-sm hover:shadow transition-all duration-200 focus:shadow-md"
+              className="form-input flex-1 min-h-[48px] max-h-32 resize-none py-2 sm:py-3 pr-12 shadow-sm hover:shadow-md transition-all duration-300 focus:shadow-md rounded-xl border-indigo-200/50 dark:border-indigo-700/30 pl-3 sm:pl-4"
               style={{ 
                 height: 'auto',
-                minHeight: '44px',
+                minHeight: '48px',
                 overflowY: input.split('\n').length > 1 ? 'auto' : 'hidden',
                 width: '100%'
               }}
             />
-            <span className={`absolute right-3 bottom-3 text-xs px-1.5 py-0.5 rounded-full transition-all ${
+            <span className={`absolute right-2 sm:right-3 bottom-2 sm:bottom-3 text-xs px-1.5 sm:px-2 py-0.5 rounded-full transition-all ${
               mode === 'command' 
-                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300' 
+                ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300 border border-blue-200 dark:border-blue-800/30' 
                 : mode === 'reflect' 
-                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300' 
-                  : 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300'
+                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/50 dark:text-purple-300 border border-purple-200 dark:border-purple-800/30' 
+                  : 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300 border border-green-200 dark:border-green-800/30'
             }`}>
               {mode}
             </span>
           </div>
           <button 
             onClick={sendMessage} 
-            className="btn-primary px-6 h-[44px] flex items-center justify-center hover:scale-105 transform transition-all duration-200 active:scale-95"
+            className="bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-400 text-white rounded-xl px-4 sm:px-6 h-[48px] flex items-center justify-center hover:scale-105 transform transition-all duration-300 active:scale-95 shadow-sm hover:shadow min-w-[48px] sm:min-w-[64px]"
             disabled={loading || !input.trim()}
           >
             {loading ? (
@@ -252,11 +266,13 @@ const EnhancedChatInterface: React.FC = () => {
             )}
           </button>
         </div>
-        <div className="mt-2 flex justify-between items-center text-xs text-gray-500 dark:text-gray-400 px-1">
-          <span>Press Enter to send, Shift+Enter for new line</span>
-          <div className="flex items-center space-x-2">
+        <div className="mt-2 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 text-xs text-gray-500 dark:text-gray-400 px-1">
+          <div className="bg-white/70 dark:bg-dark-800/30 px-2 py-1 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm w-full sm:w-auto">
+            <span>Press <span className="text-indigo-600 dark:text-indigo-400 font-medium">Enter</span> to send, <span className="text-indigo-600 dark:text-indigo-400 font-medium">Shift+Enter</span> for new line</span>
+          </div>
+          <div className="flex items-center space-x-2 bg-white/70 dark:bg-dark-800/30 px-2 py-1 rounded-lg border border-gray-100 dark:border-gray-800 shadow-sm">
             <span className={`w-2 h-2 rounded-full ${mode === 'command' ? 'bg-blue-500' : mode === 'reflect' ? 'bg-purple-500' : 'bg-green-500'} animate-pulse-slow`}></span>
-            <span>Mode: {mode.charAt(0).toUpperCase() + mode.slice(1)}</span>
+            <span>Mode: <span className="font-medium">{mode.charAt(0).toUpperCase() + mode.slice(1)}</span></span>
           </div>
         </div>
       </div>
@@ -264,7 +280,7 @@ const EnhancedChatInterface: React.FC = () => {
       {/* Settings modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 backdrop-blur-sm">
-          <div className="card w-full max-w-lg scale-in elevation-3">
+          <div className="card w-full max-w-[95%] sm:max-w-lg scale-in elevation-3">
             <div className="card-header flex justify-between items-center bg-gradient-to-r from-white to-gray-50 dark:from-dark-800 dark:to-dark-700">
               <h3 className="font-semibold text-lg text-brand-800 dark:text-brand-200 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -279,7 +295,7 @@ const EnhancedChatInterface: React.FC = () => {
                 </svg>
               </button>
             </div>
-            <div className="card-body space-y-5 p-5">
+            <div className="card-body space-y-4 sm:space-y-5 p-4 sm:p-5">
               <div className="animate-fade-in" style={{ animationDelay: '50ms' }}>
                 <label className="form-label flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -313,7 +329,7 @@ const EnhancedChatInterface: React.FC = () => {
                   onChange={e => setSettings({ ...settings, temperature: parseFloat(e.target.value) })}
                   className="w-full h-2 bg-gradient-to-r from-blue-400 via-purple-400 to-red-400 rounded-lg appearance-none cursor-pointer"
                 />
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
+                <div className="flex justify-between text-2xs sm:text-xs text-gray-500 dark:text-gray-400 mt-1 font-medium">
                   <span className="text-blue-600 dark:text-blue-400">Precise</span>
                   <span className="text-purple-600 dark:text-purple-400">Balanced</span>
                   <span className="text-red-600 dark:text-red-400">Creative</span>
@@ -389,7 +405,7 @@ const EnhancedChatInterface: React.FC = () => {
 
       {/* Toast notification */}
       {toast && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-dark-800/90 text-white px-5 py-3 rounded-xl shadow-lg z-50 slide-in-bottom flex items-center space-x-3 border border-dark-700/50 backdrop-blur-sm">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-dark-800/90 text-white px-4 sm:px-5 py-2 sm:py-3 rounded-xl shadow-lg z-50 slide-in-bottom flex items-center space-x-2 sm:space-x-3 border border-dark-700/50 backdrop-blur-sm max-w-[90%] sm:max-w-md">
           <div className="w-7 h-7 rounded-full bg-brand-500 flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 text-white">
               <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

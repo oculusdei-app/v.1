@@ -10,11 +10,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
   return (
-    <div className="flex h-screen bg-gray-50 dark:bg-gray-900 transition-all duration-300">
+    <div className="flex h-screen w-screen overflow-hidden bg-gray-50 dark:bg-gray-900 transition-all duration-300">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
         <div 
-          className="fixed inset-0 z-20 bg-gray-900/50 lg:hidden" 
+          className="fixed inset-0 z-20 bg-gray-900/70 backdrop-blur-sm lg:hidden" 
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -22,12 +22,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div
         className={`
-          fixed inset-y-0 left-0 z-30 w-64 transform transition-transform duration-300 ease-in-out 
+          fixed inset-y-0 left-0 z-30 w-[85vw] max-w-[280px] transform transition-transform duration-300 ease-in-out 
           lg:translate-x-0 lg:static lg:inset-0 bg-white dark:bg-gray-800 shadow-lg
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between h-16 px-3 sm:px-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center">
             <img 
               src="/eye-logo.svg" 
@@ -54,9 +54,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       </div>
       
       {/* Main content */}
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex flex-col flex-1 min-w-0 w-full overflow-hidden">
         {/* Top navigation */}
-        <div className="flex items-center justify-between h-16 px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between h-16 px-3 sm:px-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
           <button
             className="p-1 rounded-md lg:hidden hover:bg-gray-200 dark:hover:bg-gray-700"
             onClick={() => setSidebarOpen(true)}
