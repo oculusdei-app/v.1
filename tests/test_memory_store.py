@@ -1,5 +1,6 @@
 import unittest
 from backend.memory.memory_writer import get_memory_store, log_event
+from backend.memory.memory_writer import delete_entry
 
 class MemoryStoreTest(unittest.TestCase):
     def setUp(self):
@@ -21,6 +22,12 @@ class MemoryStoreTest(unittest.TestCase):
         entries = self.store.get_last(1)
         self.assertEqual(len(entries), 1)
         self.assertEqual(entries[0].content, "second")
+
+    def test_delete_entry(self):
+        entry_id = log_event("to delete")
+        deleted = delete_entry(entry_id)
+        self.assertTrue(deleted)
+        self.assertIsNone(self.store.get_by_id(entry_id))
 
 if __name__ == '__main__':
     unittest.main()

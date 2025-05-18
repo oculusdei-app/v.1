@@ -143,6 +143,22 @@ class MemoryStore:
                 if entry.id == entry_id:
                     return entry
             return None
+
+    def delete(self, entry_id: str) -> bool:
+        """Delete a memory entry by its ID."""
+        with self._lock:
+            for i, entry in enumerate(self.entries):
+                if entry.id == entry_id:
+                    del self.entries[i]
+                    if entry.type in self.type_index:
+                        try:
+                            self.type_index[entry.type].remove(entry)
+                            if not self.type_index[entry.type]:
+                                del self.type_index[entry.type]
+                        except ValueError:
+                            pass
+                    return True
+            return False
     
     def count_entries(self, entry_type: Optional[str] = None) -> int:
         """

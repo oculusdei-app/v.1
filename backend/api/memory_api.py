@@ -7,14 +7,21 @@ allowing retrieval, searching, and creation of memory entries.
 
 from typing import Dict, List, Optional, Any
 from enum import Enum
-from fastapi import FastAPI, HTTPException, Query, Path, status
+from fastapi import FastAPI, HTTPException, Query, Path, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from datetime import datetime
 
 # Import memory components
 from backend.memory.memory_store import MemoryEntry
-from backend.memory.memory_writer import get_memory_store, log_event, log_decision, log_insight, log_project
+from backend.memory.memory_writer import (
+    get_memory_store,
+    log_event,
+    log_decision,
+    log_insight,
+    log_project,
+    delete_entry as remove_entry,
+)
 from backend.memory.memory_retriever import (
     find_entries_by_keyword,
     summarize_recent_events,
@@ -99,6 +106,7 @@ async def root():
         "endpoints": [
             "/memory/last",
             "/memory/id/{entry_id}",
+            "DELETE /memory/id/{entry_id}",
             "/memory/type/{entry_type}",
             "/memory/search",
             "/memory/insights",
@@ -149,6 +157,21 @@ async def get_entry_by_id(entry_id: str = Path(..., description="Memory entry ID
     if not entry:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found")
     return memory_entry_to_response(entry)
+
+
+@app.delete(
+    "/memory/id/{entry_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    tags=["Memory Management"],
+    summary="Delete memory entry by ID",
+    description="Remove a memory entry from the store using its ID",
+)
+async def delete_entry(entry_id: str = Path(..., description="Memory entry ID")):
+    """Delete a memory entry by its unique ID."""
+    deleted = remove_entry(entry_id)
+    if not deleted:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Entry not found")
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get(
